@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        #startStopButton {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Speech To Text</h1>
+    <button id="startStopButton">Start Listening</button>
+    <div id="result"></div>
+    <script>
+        const startStopButton = document.getElementById('startStopButton');
+        const resultDiv = document.getElementById('result');
+
+        const SpeechRecognition = window.SpeechRecongition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = true;
+        recognition.continuous = true;
+        let listening = false;
+        recognition.onresult = (event) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            resultDiv.innerHTML = transcript;
+            console.log(transcript);
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error", event)
+        }
+
+        recognition.onend = () => {
+            listening = false;
+            startStopButton.textContent = 'Start Listening'
+        }
+
+        startStopButton.addEventListener('click', () => {
+            if (listening) {
+                recognition.stop();
+                listening = false;
+                startStopButton.textContent = 'Start Listening'
+            } else {
+                recognition.start();
+                listening = true;
+                startStopButton.textContent = 'Stop Listening'
+            }
+        })
+    </script>
+</body>
+</html>
