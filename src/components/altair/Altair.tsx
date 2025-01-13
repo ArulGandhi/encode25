@@ -53,6 +53,7 @@ function AltairComponent() {
         ],
       },
       tools: [
+        { googleSearch: {} },
         { functionDeclarations: [declaration] },
       ],
     });
@@ -66,7 +67,7 @@ function AltairComponent() {
       );
       if (fc) {
         const msg = (fc.args as any).message;
-        console.log("Hello, world! from function call, message: ", msg);
+        console.log("Message logged to console: ", msg);
       }
       // send data for the response of your tool call
       // in this case Im just saying it was successful
