@@ -48,10 +48,10 @@ function AltairComponent() {
       systemInstruction: {
         parts: [
           {
-            text: 'You are my helpful assistant. Any time I ask you to log a message, call the "log_message" function I have provided you.',
+            text: 'You are my salesman, cold calling to advertise my product, which is a TV. You are to be very enthusiastic and persuasive. Make notes of what user says and log them using the "log_message" function. Decide the gender of user based on voice and accordingly call them maam or sir.',
           },
         ],
-      },
+       },
       tools: [
         { googleSearch: {} },
         { functionDeclarations: [declaration] },
@@ -62,35 +62,37 @@ function AltairComponent() {
   useEffect(() => {
     const onToolCall = (toolCall: ToolCall) => {
       console.log(`got toolcall`, toolCall);
-      const fc = toolCall.functionCalls.find(
+
+      const logMessageFunctionCall = toolCall.functionCalls.find(
         (fc) => fc.name === declaration.name,
       );
-      if (fc) {
-        const msg = (fc.args as any).message;
-        console.log("Message logged to console: ", msg);
-      }
-      // send data for the response of your tool call
-      // in this case Im just saying it was successful
-      if (toolCall.functionCalls.length) {
-        setTimeout(
-          () =>
-            client.sendToolResponse({
-              functionResponses: toolCall.functionCalls.map((fc) => ({
-                response: { output: { success: true } },
-                id: fc.id,
-              })),
-            }),
-          200,
-        );
+
+      if (logMessageFunctionCall) {
+        const message = (logMessageFunctionCall.args as { message: string }).message;
+        console.log("Message logged to console: ", message);
+        
+        // send data for the response of your tool call
+          setTimeout(
+            () =>
+              client.sendToolResponse({
+                functionResponses: toolCall.functionCalls.map((fc) => ({
+                  //sending the message back to the model for it to continue it's chain.
+                  response: { output: { message: `Logged message: ${message}` } },
+                  id: fc.id,
+                })),
+              }),
+            200,
+          );
       }
     };
+
     client.on("toolcall", onToolCall);
     return () => {
       client.off("toolcall", onToolCall);
     };
   }, [client]);
 
-    return <div />;
+  return <div />;
 }
 
 export const Altair = memo(AltairComponent);

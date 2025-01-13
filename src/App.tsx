@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import "./MinimalApp.scss";
 import { LiveAPIProvider } from "./contexts/LiveAPIContext";
-import SidePanel from "./components/side-panel/SidePanel";
 import { Altair } from "./components/altair/Altair";
 import ControlTray from "./components/control-tray/ControlTray";
 import cn from "classnames";
@@ -22,7 +21,6 @@ function App() {
     <div className="App">
       <LiveAPIProvider url={uri} apiKey={API_KEY}>
         <div className="streaming-console main-console">
-          <SidePanel />
           <main className="main-container">
             <div className="main-app-area">
               <div className="content-container">
