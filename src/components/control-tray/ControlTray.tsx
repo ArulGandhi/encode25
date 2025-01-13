@@ -60,7 +60,7 @@ function ControlTray({
   const [inVolume, setInVolume] = useState(0);
   const [audioRecorder] = useState(() => new AudioRecorder());
   const [muted, setMuted] = useState(false);
-  const renderCanvasRef = useRef<HTMLCanvasElement>(null);
+
   const connectButtonRef = useRef<HTMLButtonElement>(null);
 
   const { client, connected, connect, disconnect, volume } =
@@ -97,42 +97,6 @@ function ControlTray({
     };
   }, [connected, client, muted, audioRecorder]);
 
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = activeVideoStream;
-    }
-
-    let timeoutId = -1;
-
-    function sendVideoFrame() {
-      const video = videoRef.current;
-      const canvas = renderCanvasRef.current;
-
-      if (!video || !canvas) {
-        return;
-      }
-
-      const ctx = canvas.getContext("2d")!;
-      canvas.width = video.videoWidth * 0.25;
-      canvas.height = video.videoHeight * 0.25;
-      if (canvas.width + canvas.height > 0) {
-        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const base64 = canvas.toDataURL("image/jpeg", 1.0);
-        const data = base64.slice(base64.indexOf(",") + 1, Infinity);
-          client.sendRealtimeInput([{ mimeType: "image/jpeg", data: data }]);
-      }
-      if (connected) {
-        timeoutId = window.setTimeout(sendVideoFrame, 1000 / 0.5);
-      }
-    }
-    if (connected && activeVideoStream !== null) {
-      requestAnimationFrame(sendVideoFrame);
-    }
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [connected, activeVideoStream, client, videoRef]);
-
   //handler for swapping from one video-stream to the next
   const changeStreams = (next?: UseMediaStreamResult) => async () => {
     if (next) {
@@ -149,9 +113,7 @@ function ControlTray({
 
   return (
     <section className="control-tray">
-      <canvas style={{ display: "none" }} ref={renderCanvasRef} />
       <nav className={cn("actions-nav", { disabled: !connected })}>
-          {/* No buttons to render in actions nav */}
         {children}
       </nav>
 
@@ -167,7 +129,6 @@ function ControlTray({
             </span>
           </button>
         </div>
-        {/* Removed text indicator here */}
       </div>
     </section>
   );

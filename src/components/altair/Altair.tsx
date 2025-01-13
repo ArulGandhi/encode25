@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 import { type FunctionDeclaration, SchemaType } from "@google/generative-ai";
-import { useEffect, useRef, useState, memo } from "react";
-import vegaEmbed from "vega-embed";
+import { useEffect, memo } from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { ToolCall } from "../../multimodal-live-types";
 
 const declaration: FunctionDeclaration = {
-  name: "render_altair",
-  description: "Displays an altair graph in json format.",
+  name: "log_message",
+  description: "Logs a message.",
   parameters: {
     type: SchemaType.OBJECT,
     properties: {
-      json_graph: {
+      message: {
         type: SchemaType.STRING,
-        description:
-          "JSON STRING representation of the graph to render. Must be a string, not a json object",
+        description: "The message to log.",
       },
     },
-    required: ["json_graph"],
+    required: ["message"],
   },
 };
 
 function AltairComponent() {
-  const [jsonString, setJSONString] = useState<string>("");
   const { client, setConfig } = useLiveAPIContext();
 
   useEffect(() => {
@@ -51,13 +48,11 @@ function AltairComponent() {
       systemInstruction: {
         parts: [
           {
-            text: 'You are my helpful assistant. Any time I ask you for a graph call the "render_altair" function I have provided you. Dont ask for additional information just make your best judgement.',
+            text: 'You are my helpful assistant. Any time I ask you to log a message, call the "log_message" function I have provided you.',
           },
         ],
       },
       tools: [
-        // there is a free-tier quota for search
-        { googleSearch: {} },
         { functionDeclarations: [declaration] },
       ],
     });
@@ -70,8 +65,8 @@ function AltairComponent() {
         (fc) => fc.name === declaration.name,
       );
       if (fc) {
-        const str = (fc.args as any).json_graph;
-        setJSONString(str);
+        const msg = (fc.args as any).message;
+        console.log("Hello, world! from function call, message: ", msg);
       }
       // send data for the response of your tool call
       // in this case Im just saying it was successful
@@ -94,14 +89,7 @@ function AltairComponent() {
     };
   }, [client]);
 
-  const embedRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (embedRef.current && jsonString) {
-      vegaEmbed(embedRef.current, JSON.parse(jsonString));
-    }
-  }, [embedRef, jsonString]);
-  return <div className="vega-embed" ref={embedRef} />;
+    return <div />;
 }
 
 export const Altair = memo(AltairComponent);
