@@ -19,14 +19,17 @@ import { memo, ReactNode, useEffect, useRef, useState } from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { AudioRecorder } from "../../lib/audio-recorder";
 import "./control-tray.scss";
+import { stopRing } from "../../App";
 
 export type ControlTrayProps = {
   children?: ReactNode;
+    audioRef: React.MutableRefObject<HTMLAudioElement | null>
 };
 
 
 function ControlTray({
   children,
+    audioRef,
 }: ControlTrayProps) {
   const [inVolume, setInVolume] = useState(0);
   const [audioRecorder] = useState(() => new AudioRecorder());
@@ -36,6 +39,7 @@ function ControlTray({
 
   const { client, connected, connect, disconnect } =
     useLiveAPIContext();
+
 
   useEffect(() => {
     if (!connected && connectButtonRef.current) {
@@ -68,6 +72,19 @@ function ControlTray({
     };
   }, [connected, client, muted, audioRecorder]);
 
+    const handleButtonClick = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.loop = true;
+        audioRef.current.play()
+      }
+      stopRing(audioRef)
+        if (connected) {
+        disconnect();
+        } else {
+        connect();
+        }
+    };
+
   return (
     <section className="control-tray">
       <nav className={cn("actions-nav", { disabled: !connected })}>
@@ -79,7 +96,7 @@ function ControlTray({
           <button
             ref={connectButtonRef}
             className={cn("action-button connect-toggle", { connected })}
-            onClick={connected ? disconnect : connect}
+            onClick={handleButtonClick}
           >
             <span className="material-symbols-outlined filled">
               {connected ? "pause" : "play_arrow"}
