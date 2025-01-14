@@ -7,8 +7,15 @@ A React application demonstrating real-time, multi-modal communication using Goo
 *   Real-time audio and text processing.
 *   Google Gemini API integration.
 *   Kinde authentication.
-*  Audio worklets.
-*   Real-time logging.
+*   WebSockets.
+
+## Technologies Used
+
+*   React
+*   Node.js
+*   Kinde
+*   WebSockets
+*   Google's Gemini Multimodal Live API
 
 ## Getting Started
 
