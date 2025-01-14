@@ -90,14 +90,14 @@ function ControlTray({
             </button>
           ) : (
             <button onClick={() => login()} className="action-button login">
-              Log in
+            <span className="material-symbols-outlined">login</span>
             </button>
           )}
         </div>
       </div>
        {isAuthenticated && (
         <button onClick={logout} className="action-button logout">
-          Log out
+          <span className="material-symbols-outlined">logout</span>
         </button>
       )}
     </section>

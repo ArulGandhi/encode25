@@ -149,21 +149,17 @@
     }
   }
   
-  .action-button.login {
-      background-color: var(--Blue-500);
-      color: var(--Neutral-5);
-      margin-top: 10px;
-    
-      &:hover {
-        border: 1px solid var(--Blue-500);
-        background-color: var(--Blue-400);
-      }
-    }
-
+  .action-button.login img {
+    max-width: 100%;
+    max-height: 100%;
+  }
   .action-button.logout{
      background-color: var(--Red-500);
      color: var(--Neutral-5);
      margin-top: 10px;
+     width: 48px;
+    height: 48px;
+    font-size: 1.7rem;
       &:hover {
       border: 1px solid var(--Red-500);
        background-color: var(--Red-400);
