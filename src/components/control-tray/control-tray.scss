@@ -108,12 +108,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex; /* changed to flex */
-  justify-content: center; /* horizontally center items */
-  align-items: center; /* vertically center items */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: column;
   gap: 8px;
-  /* padding-bottom: 18px; Remove unneeded padding */
   
   .disabled .action-button,
   .action-button.disabled {
@@ -130,15 +129,14 @@
     gap: 4px;
 
     .connection-button-container {
-        border-radius: 40px; /* Make rounder */
-        border: 1px solid var(--Neutral-30);
-        background: var(--Neutral-5);
-        padding: 15px;
-        
+      border-radius: 40px;
+      border: 1px solid var(--Neutral-30);
+      background: var(--Neutral-5);
+      padding: 15px;
     }
 
     .text-indicator {
-        display:none; /* Remove indicator */
+      display: none;
       font-size: 11px;
       color: var(--Blue-500);
       user-select: none;
@@ -150,10 +148,32 @@
       }
     }
   }
+  
+  .action-button.login {
+      background-color: var(--Blue-500);
+      color: var(--Neutral-5);
+      margin-top: 10px;
+    
+      &:hover {
+        border: 1px solid var(--Blue-500);
+        background-color: var(--Blue-400);
+      }
+    }
+
+  .action-button.logout{
+     background-color: var(--Red-500);
+     color: var(--Neutral-5);
+     margin-top: 10px;
+      &:hover {
+      border: 1px solid var(--Red-500);
+       background-color: var(--Red-400);
+    }
+   }
 }
 
+
 .actions-nav {
-  display: none; /* Hide the actions-nav */
+  display: none;
 }
 
 @keyframes opacity-pulse {
@@ -170,10 +190,9 @@
   }
 }
 
-/* Enlarge the button  */
 .control-tray .connection-container .connection-button-container .action-button {
   width: 80px;
   height: 80px;
   font-size: 2rem;
-  border-radius: 40px; /* keep button round */
+  border-radius: 40px;
 }

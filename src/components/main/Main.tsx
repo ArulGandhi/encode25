@@ -13,86 +13,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { type FunctionDeclaration, SchemaType } from "@google/generative-ai";
 import { useEffect, memo } from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
-import { ToolCall } from "../../multimodal-live-types";
-
-const declaration: FunctionDeclaration = {
-  name: "log_message",
-  description: "Logs a message.",
-  parameters: {
-    type: SchemaType.OBJECT,
-    properties: {
-      message: {
-        type: SchemaType.STRING,
-        description: "The message to log.",
-      },
-    },
-    required: ["message"],
-  },
-};
+import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 
 function AltairComponent() {
   const { client, setConfig } = useLiveAPIContext();
+  const { isAuthenticated, isLoading } = useKindeAuth();
 
-  useEffect(() => {
-    setConfig({
-      model: "models/gemini-2.0-flash-exp",
-      generationConfig: {
-        responseModalities: "audio",
-        speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: "Aoede" } },
-        },
-      },
-      systemInstruction: {
-        parts: [
-          {
-            text: 'You are my salesman, cold calling to advertise my product, which is a TV. You are to be very enthusiastic and persuasive. Make notes of what user says and log them using the "log_message" function. Decide the gender of user based on voice and accordingly call them maam or sir.',
+    useEffect(() => {
+    if (isAuthenticated) {
+      setConfig({
+        model: "models/gemini-2.0-flash-exp",
+        generationConfig: {
+          responseModalities: "audio",
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: "Aoede" } },
           },
+        },
+        systemInstruction: {
+          parts: [
+            {
+              text: 'You are my salesman, cold calling to advertise my product, which is a TV. You are to be very enthusiastic and persuasive. Make notes of what user says and log them using the "log_message" function. Decide the gender of user based on voice and accordingly call them maam or sir.',
+            },
+          ],
+        },
+        tools: [
+          { googleSearch: {} },
         ],
-       },
-      tools: [
-        { googleSearch: {} },
-        { functionDeclarations: [declaration] },
-      ],
-    });
-  }, [setConfig]);
+      });
+    }
+  }, [setConfig, isAuthenticated]);
+
 
   useEffect(() => {
-    const onToolCall = (toolCall: ToolCall) => {
-      console.log(`got toolcall`, toolCall);
+    if (isAuthenticated) {
+          //remove the tool call code
+    }
+  }, [client, isAuthenticated]);
 
-      const logMessageFunctionCall = toolCall.functionCalls.find(
-        (fc) => fc.name === declaration.name,
-      );
 
-      if (logMessageFunctionCall) {
-        const message = (logMessageFunctionCall.args as { message: string }).message;
-        console.log("Message logged to console: ", message);
-        
-        // send data for the response of your tool call
-          setTimeout(
-            () =>
-              client.sendToolResponse({
-                functionResponses: toolCall.functionCalls.map((fc) => ({
-                  //sending the message back to the model for it to continue it's chain.
-                  response: { output: { message: `Logged message: ${message}` } },
-                  id: fc.id,
-                })),
-              }),
-            200,
-          );
-      }
-    };
-
-    client.on("toolcall", onToolCall);
-    return () => {
-      client.off("toolcall", onToolCall);
-    };
-  }, [client]);
-
-  return <div />;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  
+    return (
+    <div>
+      {!isAuthenticated && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          padding: '10px',
+          backgroundColor: '#f8d7da',
+          color: '#721c24',
+          textAlign: 'center',
+          zIndex: 1000
+        }}>
+          Please log in to access this content.
+        </div>
+      )}
+      <div></div>
+    </div>
+  );
 }
 
 export const Altair = memo(AltairComponent);

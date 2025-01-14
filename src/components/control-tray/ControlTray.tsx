@@ -19,11 +19,11 @@ import { memo, ReactNode, useEffect, useRef, useState } from "react";
 import { useLiveAPIContext } from "../../contexts/LiveAPIContext";
 import { AudioRecorder } from "../../lib/audio-recorder";
 import "./control-tray.scss";
+import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 
 export type ControlTrayProps = {
   children?: ReactNode;
 };
-
 
 function ControlTray({
   children,
@@ -34,14 +34,15 @@ function ControlTray({
 
   const connectButtonRef = useRef<HTMLButtonElement>(null);
 
-  const { client, connected, connect, disconnect } =
-    useLiveAPIContext();
+  const { client, connected, connect, disconnect } = useLiveAPIContext();
+  const { isAuthenticated, login, logout } = useKindeAuth();
 
   useEffect(() => {
     if (!connected && connectButtonRef.current) {
       connectButtonRef.current.focus();
     }
   }, [connected]);
+
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--volume",
@@ -58,7 +59,7 @@ function ControlTray({
         },
       ]);
     };
-    if (connected && !muted && audioRecorder) {
+    if (connected && !muted && audioRecorder && isAuthenticated) {
       audioRecorder.on("data", onData).on("volume", setInVolume).start();
     } else {
       audioRecorder.stop();
@@ -66,27 +67,39 @@ function ControlTray({
     return () => {
       audioRecorder.off("data", onData).off("volume", setInVolume);
     };
-  }, [connected, client, muted, audioRecorder]);
+  }, [connected, client, muted, audioRecorder, isAuthenticated]);
 
   return (
     <section className="control-tray">
-      <nav className={cn("actions-nav", { disabled: !connected })}>
+      <nav className={cn("actions-nav", { disabled: !connected || !isAuthenticated })}>
         {children}
       </nav>
 
       <div className={cn("connection-container", { connected })}>
         <div className="connection-button-container">
-          <button
-            ref={connectButtonRef}
-            className={cn("action-button connect-toggle", { connected })}
-            onClick={connected ? disconnect : connect}
-          >
-            <span className="material-symbols-outlined filled">
-              {connected ? "pause" : "play_arrow"}
-            </span>
-          </button>
+          {isAuthenticated ? (
+            <button
+              ref={connectButtonRef}
+              className={cn("action-button connect-toggle", { connected })}
+              onClick={connected ? disconnect : connect}
+              disabled={!isAuthenticated}
+            >
+              <span className="material-symbols-outlined filled">
+                {connected ? "mic" : "mic_off"}
+              </span>
+            </button>
+          ) : (
+            <button onClick={() => login()} className="action-button login">
+              Log in
+            </button>
+          )}
         </div>
       </div>
+       {isAuthenticated && (
+        <button onClick={logout} className="action-button logout">
+          Log out
+        </button>
+      )}
     </section>
   );
 }

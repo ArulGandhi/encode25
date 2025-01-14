@@ -2,6 +2,7 @@
   "name": "encode-project",
   "version": "0.1.0",
   "dependencies": {
+    "@kinde-oss/kinde-auth-react": "^4.0.4",
     "classnames": "^2.5.1",
     "dotenv-flow": "^4.1.0",
     "eventemitter3": "^5.0.1",
@@ -45,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@google/generative-ai": "^0.21.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -56,8 +58,7 @@
     "@types/react-dom": "^18.3.1",
     "@types/react-syntax-highlighter": "^15.5.13",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.3",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "typescript": "^5.6.3"
   },
   "overrides": {
     "typescript": "^5.6.3"
