@@ -1,7 +1,7 @@
 # Encode Project
 
 A React application demonstrating real-time, multi-modal communication using Google's Gemini API and a custom live API.
-
+Encode-1.pdf contains the ppt for the project
 ## Features
 
 *   Real-time audio and text processing.
