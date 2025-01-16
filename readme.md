@@ -18,7 +18,7 @@ Encode-1.pdf contains the ppt for the project
 *   Google's Gemini Multimodal Live API
 
 ## Getting Started
-
+## Only for personal use (hosting it requires HTTPS, which is not required when hosting locally)
 1.  Clone repo, install dependencies.
 2.  Copy `.env` from `.env.sample`, fill with API keys and Kinde credentials.
 3.  Run `npm start`.
